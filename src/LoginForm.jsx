@@ -36,12 +36,13 @@ const LoginForm = () => {
           <li><a href="#">Marketplace</a></li>
           <li><a href="#">Create</a></li>
           <li><a href="#">Robux</a></li>
+          <input className="roblox-search" type="text" placeholder="Search" />
         </ul>
+        
       </nav>
 
-      <div className="roblox-search">
-        <input type="text" placeholder="Search" />
-      </div>
+   
+     
 
       <button className="signup-btn">Sign Up</button>
     </header>
