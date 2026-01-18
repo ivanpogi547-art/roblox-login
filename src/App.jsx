@@ -1,118 +1,50 @@
-import { useState } from "react";
-
+import { useState, useEffect } from "react";
+import { supabase } from "./supabase";
+import Login from "./Login";
+import Register from "./Register";
 
 export default function App() {
-  const [isLogin, setIsLogin] = useState(true);
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [message, setMessage] = useState("");
+  const [session, setSession] = useState(null);
+  const [showRegister, setShowRegister] = useState(false);
+  
+const handleLogout = async () => {
+  await supabase.auth.signOut();
+  setShowRegister(false);
+};
 
-  // LOGIN
-  const handleLogin = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    setMessage("");
 
-    const { error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data }) => {
+      setSession(data.session);
     });
 
-    if (error) setMessage(error.message);
-    else setMessage("Login successful!");
-
-    setLoading(false);
-  };
-
-  // REGISTER
-  const handleRegister = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    setMessage("");
-
-    const { error } = await supabase.auth.signUp({
-      email,
-      password,
+    supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session);
     });
+  }, []);
 
-    if (error) setMessage(error.message);
-    else setMessage(
-      "Account created! Check your email to confirm."
-    );
-
-    setLoading(false);
-  };
+  if (session) {
+  const firstName = session.user.email.split("@")[0];
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="bg-white p-8 rounded-2xl shadow-lg w-full max-w-sm">
-        <h2 className="text-2xl font-semibold text-center mb-6">
-          {isLogin ? "Login" : "Register"}
-        </h2>
-
-        <form onSubmit={isLogin ? handleLogin : handleRegister}>
-          <input
-            type="email"
-            className="w-full p-3 rounded-lg border mb-3 focus:outline-none"
-            placeholder="Email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
-
-          <input
-            type="password"
-            className="w-full p-3 rounded-lg border mb-3 focus:outline-none"
-            placeholder="Password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
-
-          {message && (
-            <p
-              className={`text-sm mb-3 text-center ${
-                message.includes("successful") || message.includes("created")
-                  ? "text-green-500"
-                  : "text-red-500"
-              }`}
-            >
-              {message}
-            </p>
-          )}
-
-          <button
-            type="submit"
-            className={`w-full py-3 rounded-lg transition ${
-              isLogin ? "bg-blue-600 hover:bg-blue-700 text-white" : "bg-green-600 hover:bg-green-700 text-white"
-            }`}
-          >
-            {loading
-              ? isLogin
-                ? "Logging in..."
-                : "Registering..."
-              : isLogin
-              ? "Login"
-              : "Register"}
-          </button>
-        </form>
-
-        <p className="text-center mt-4">
-          {isLogin ? "Don't have an account?" : "Already have an account?"}{" "}
-          <button
-            className="text-blue-600 hover:underline"
-            onClick={() => {
-              setIsLogin(!isLogin);
-              setMessage("");
-              setEmail("");
-              setPassword("");
-            }}
-          >
-            {isLogin ? "Register" : "Login"}
-          </button>
-        </p>
-      </div>
+    <div className="min-h-screen bg-gray-500 flex items-center justify-center flex-col ">
+      <h1 className="text-3xl font-bold">
+        Welcome, {firstName}
+      </h1>
+       <button
+        onClick={handleLogout}
+        className="bg-blue-500 text-white px-6 py-2 rounded hover:bg-red-600 mt-[50px]"
+      >    LOGOUT  </button>
     </div>
   );
+}
+
+
+  return showRegister ? (
+    
+    <Register onSwitch={() => setShowRegister(false)} /> // switch to Register
+
+  ) : (
+    <Login onSwitch={() => setShowRegister(true)} /> // switch to Login
+  ); 
 }
